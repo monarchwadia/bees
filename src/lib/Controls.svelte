@@ -29,7 +29,7 @@
   <button
     class="btn"
     on:click={() => {
-      state.bees.push(beeBuilder({}, state));
+      state.objects.push(beeBuilder({}, state));
     }}>Add Bee</button
   >
 

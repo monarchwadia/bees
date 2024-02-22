@@ -5,6 +5,7 @@
   import MapView from "./lib/MapView.svelte";
   import { beeBuilder } from "./bees/beeBuilder";
   import Controls from "./lib/Controls.svelte";
+  import { trailPointBuilder } from "./bees/trailPointBuilder";
 
   let output: HTMLDivElement;
 
@@ -17,16 +18,24 @@
     config,
     controls: {
       isRunning: true,
-      speed: 10,
+      speed: 100,
     },
-    bees: [],
+    objects: [],
   };
 
   // initial bees
-  state.bees.push(beeBuilder({}, state));
-  state.bees.push(beeBuilder({}, state));
-  state.bees.push(beeBuilder({}, state));
-  state.bees.push(beeBuilder({}, state));
+  state.objects.push(beeBuilder({}, state));
+  state.objects.push(beeBuilder({}, state));
+  state.objects.push(beeBuilder({}, state));
+  state.objects.push(beeBuilder({}, state));
+
+  // initial flowers
+  for (let i = 0; i < 400; i++) {
+    state.objects.push(trailPointBuilder({ x: i, y: i }, state));
+  }
+
+  // trails for bees
+  state.objects.push();
 
   let instance;
 

@@ -16,7 +16,7 @@ export const agentExecutorBuilder = async (state: WorldState) => {
       description: "Creates a single bee in the center of the map.",
       schema: z.object({}),
       func: async () => {
-        state.bees.push(beeBuilder({}, state));
+        state.objects.push(beeBuilder({}, state));
         return "Bee created";
       },
     }),

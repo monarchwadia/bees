@@ -10,9 +10,21 @@ export const sketchProvider = (state: WorldState) => (p: p5) => {
     p.background(0);
 
     // paint the bees
-    state.bees.forEach((b) => {
-      p.fill(...b.color);
-      p.rect(b.x, b.y, 10, 10);
+    state.objects.forEach((obj) => {
+      switch (obj.type) {
+        case "bee":
+          p.fill([255, 255, 0]);
+          p.rect(obj.x, obj.y, 10, 10);
+          break;
+        case "flower":
+          p.fill([255, 125, 125]);
+          p.ellipse(obj.x, obj.y, 20, 20);
+          break;
+        case "trail-point":
+          p.fill([255, 255, 255]);
+          p.ellipse(obj.x, obj.y, 5);
+          break;
+      }
     });
   };
 };
