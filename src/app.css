@@ -14,4 +14,12 @@ body {
         @apply font-bold;
         @apply mb-4;
     }
+
+    .btn {
+        @apply bg-blue-500;
+        @apply text-white;
+        @apply px-4;
+        @apply py-2;
+        @apply rounded;
+    }
 }

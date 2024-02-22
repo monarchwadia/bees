@@ -7,15 +7,18 @@ export class GameManager {
     this.state = state;
   }
 
-  start() {
-    setInterval(() => {
-      this.tick();
-    }, 1000 / 30);
+  loop() {
+    setTimeout(() => {
+      if (this.state.controls.isRunning && this.state.controls.speed > 0) {
+        this.updateState();
+      }
+
+      this.loop();
+    }, 1000 / this.state.controls.speed);
   }
 
-  tick() {
+  updateState() {
     this.state.bees.forEach((b) => {
-      console.log(b);
       b.ai(b, this.state);
     });
   }

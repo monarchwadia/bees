@@ -11,5 +11,9 @@ export type WorldState = {
     width: number;
     height: number;
   };
+  controls: {
+    isRunning: boolean;
+    speed: number;
+  };
   bees: Bee[];
 };

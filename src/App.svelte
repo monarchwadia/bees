@@ -4,6 +4,7 @@
   import { onMount } from "svelte";
   import MapView from "./lib/MapView.svelte";
   import { beeBuilder } from "./bees/beeBuilder";
+  import Controls from "./lib/Controls.svelte";
 
   let output: HTMLDivElement;
 
@@ -19,6 +20,10 @@
 
   const state: WorldState = {
     config,
+    controls: {
+      isRunning: true,
+      speed: 10,
+    },
     bees: [
       beeBuilder({ ...centerpoint }),
       beeBuilder({ ...centerpoint }),
@@ -30,11 +35,11 @@
 
   onMount(() => {
     const gameManager = new GameManager(state);
-    gameManager.start();
+    gameManager.loop();
   });
 </script>
 
-<div class="flex flex-col gap-2">
-  <h1>Hello World!</h1>
+<div class="flex flex-row gap-2">
   <MapView {state} />
+  <Controls {state} />
 </div>

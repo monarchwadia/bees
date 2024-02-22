@@ -7,11 +7,7 @@ const ai = (b: Bee, state: WorldState) => {
   b.y += Math.random() * 10 - 5;
 };
 
-console.log("beeBuilder.ts", ai);
-
 export const beeBuilder = (b: Partial<Bee>): Bee => {
-  console.log("beeBuilder.ts", ai);
-
   return {
     id: nextId++,
     x: 0,
