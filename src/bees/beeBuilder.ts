@@ -1,6 +1,6 @@
 import { getNextObjectId } from "./getNextObjectId";
 import { trailPointBuilder } from "./trailPointBuilder";
-import type { Bee, Flower, WorldState } from "./types";
+import type { Bee, Flower, TrailPoint, WorldState } from "./types";
 import { getRandomArbitrary } from "./utils";
 
 let nextId = 1;
@@ -43,21 +43,23 @@ const wanderingAi = (b: Bee, state: WorldState) => {
       o.type === "trail-point" &&
       Math.abs(o.x - b.x) < DETECTION_RANGE &&
       Math.abs(o.y - b.y) < DETECTION_RANGE
-  );
+  ) as TrailPoint[];
   if (trailPoints.length > 0) {
     const HIVE_WEIGHT = 0; // add the hive to the vector a number of times, to bias towards it
     const VECTOR_POWER = 5; // how much to move towards the vector
 
     // get the vector that is formed by the average of the trail points
-    const vector = trailPoints.reduce(
-      (acc, tp) => {
-        return {
-          x: acc.x + tp.x,
-          y: acc.y + tp.y,
-        };
-      },
-      { x: 0, y: 0 }
-    );
+    const vector = trailPoints
+      .filter((tp) => tp.strength > 0)
+      .reduce(
+        (acc, tp) => {
+          return {
+            x: acc.x + tp.x,
+            y: acc.y + tp.y,
+          };
+        },
+        { x: 0, y: 0 }
+      );
     vector.x /= trailPoints.length + HIVE_WEIGHT;
     vector.y /= trailPoints.length + HIVE_WEIGHT;
 
