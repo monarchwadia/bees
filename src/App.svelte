@@ -3,15 +3,16 @@
   import type { WorldState } from "./bees/types";
   import { sketchProvider } from "./bees/sketchProvider";
   import { GameManager } from "./bees/GameManager";
+  import { onMount } from "svelte";
 
-  let output;
+  let output: HTMLDivElement;
 
   const config = {
     width: 800,
     height: 800,
   };
-  const centerpoint = { x: config.width / 2, y: config.height / 2 };
 
+  const centerpoint = { x: config.width / 2, y: config.height / 2 };
   const state: WorldState = {
     config,
     bees: [
@@ -22,11 +23,14 @@
     ],
   };
 
-  const sketch = sketchProvider(state);
-  const gameManager = new GameManager(state);
-  gameManager.start();
+  let instance;
 
-  const instance = new p5(sketch, document.body);
+  onMount(() => {
+    const sketch = sketchProvider(state);
+    instance = new p5(sketch, output);
+    const gameManager = new GameManager(state);
+    gameManager.start();
+  });
 </script>
 
 <div class="flex flex-col gap-2">

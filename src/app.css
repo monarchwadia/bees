@@ -5,4 +5,13 @@
 body {
     font-family: 'Nunito', sans-serif;
     @apply bg-slate-900;
+    @apply text-slate-400
+}
+
+@layer components {
+    .header-1 {
+        @apply text-4xl;
+        @apply font-bold;
+        @apply mb-4;
+    }
 }
