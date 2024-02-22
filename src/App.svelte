@@ -13,24 +13,21 @@
     height: 800,
   };
 
-  const centerpoint = {
-    x: config.width / 2,
-    y: config.height / 2,
-  };
-
   const state: WorldState = {
     config,
     controls: {
       isRunning: true,
       speed: 10,
     },
-    bees: [
-      beeBuilder({ ...centerpoint }),
-      beeBuilder({ ...centerpoint }),
-      beeBuilder({ ...centerpoint }),
-      beeBuilder({ ...centerpoint }),
-    ],
+    bees: [],
   };
+
+  // initial bees
+  state.bees.push(beeBuilder({}, state));
+  state.bees.push(beeBuilder({}, state));
+  state.bees.push(beeBuilder({}, state));
+  state.bees.push(beeBuilder({}, state));
+
   let instance;
 
   onMount(() => {

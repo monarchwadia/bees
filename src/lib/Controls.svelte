@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { beeBuilder } from "@src/bees/beeBuilder";
   import type { WorldState } from "@src/bees/types";
 
   export let state: WorldState;
@@ -10,6 +11,15 @@
 </script>
 
 <div class="flex flex-col gap-2">
+  <p class="control-section-header">Bees</p>
+  <button
+    class="btn"
+    on:click={() => {
+      state.bees.push(beeBuilder({}, state));
+    }}>Add Bee</button
+  >
+
+  <p class="control-section-header">Game</p>
   <button
     class="btn"
     on:click={() => (state.controls.isRunning = !state.controls.isRunning)}
@@ -27,3 +37,10 @@
     />
   </label>
 </div>
+
+<style lang="postcss">
+  .control-section-header {
+    @apply font-bold;
+    @apply text-2xl;
+  }
+</style>

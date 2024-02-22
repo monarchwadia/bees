@@ -7,11 +7,15 @@ const ai = (b: Bee, state: WorldState) => {
   b.y += Math.random() * 10 - 5;
 };
 
-export const beeBuilder = (b: Partial<Bee>): Bee => {
+export const beeBuilder = (b: Partial<Bee>, state: WorldState): Bee => {
+  const centerpoint = {
+    x: state.config.width / 2,
+    y: state.config.height / 2,
+  };
+
   return {
     id: nextId++,
-    x: 0,
-    y: 0,
+    ...centerpoint,
     color: [255, 255, 0],
     ai,
     ...b,
