@@ -1,12 +1,28 @@
 <script lang="ts">
+  import { agentExecutorBuilder } from "@src/bees/agentExecutorBuilder";
   import { beeBuilder } from "@src/bees/beeBuilder";
   import type { WorldState } from "@src/bees/types";
+  import { onMount } from "svelte";
 
   export let state: WorldState;
 
   const changeSpeed = (e: Event) => {
     console.log("changeSpeed", (e.target as HTMLInputElement).valueAsNumber);
     state.controls.speed = (e.target as HTMLInputElement).valueAsNumber;
+  };
+
+  let agentExecutor: Awaited<ReturnType<typeof agentExecutorBuilder>>;
+  onMount(async () => {
+    agentExecutor = await agentExecutorBuilder(state);
+  });
+
+  const addBeeViaLLM = async () => {
+    alert("Starting");
+    const bee = await agentExecutor.invoke({
+      prompt: "Add one bee to the map.",
+    });
+    console.log("bee results", bee);
+    alert("Done");
   };
 </script>
 
@@ -17,6 +33,13 @@
     on:click={() => {
       state.bees.push(beeBuilder({}, state));
     }}>Add Bee</button
+  >
+
+  <button
+    class="btn"
+    on:click={() => {
+      addBeeViaLLM();
+    }}>Add Bee Via LLM</button
   >
 
   <p class="control-section-header">Game</p>
