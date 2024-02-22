@@ -9,8 +9,8 @@ export const sketchProvider = (state: WorldState) => (p: p5) => {
   p.draw = () => {
     p.background(0);
 
+    // paint the bees
     state.bees.forEach((b) => {
-      // fill yellow
       p.fill(...b.color);
       p.rect(b.x, b.y, 10, 10);
     });

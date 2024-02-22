@@ -15,8 +15,8 @@ export class GameManager {
 
   tick() {
     this.state.bees.forEach((b) => {
-      b.x += Math.random() * 10 - 5;
-      b.y += Math.random() * 10 - 5;
+      console.log(b);
+      b.ai(b);
     });
   }
 }
