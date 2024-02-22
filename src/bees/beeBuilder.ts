@@ -6,10 +6,9 @@ let nextId = 1;
 
 const wanderingAi = (b: Bee, state: WorldState) => {
   // regular wander
-  const MAX_WANDER = 8;
-  const MIN_WANDER = -8;
-  b.x += getRandomArbitrary(MIN_WANDER, MAX_WANDER);
-  b.y += getRandomArbitrary(MIN_WANDER, MAX_WANDER);
+  const WANDER = 7;
+  b.x += getRandomArbitrary(-WANDER, WANDER);
+  b.y += getRandomArbitrary(-WANDER, WANDER);
 
   // if there are trail points, bias towards them
   const trailPoints = state.objects.filter(
@@ -19,6 +18,9 @@ const wanderingAi = (b: Bee, state: WorldState) => {
       Math.abs(o.y - b.y) < 200
   );
   if (trailPoints.length > 0) {
+    const HIVE_WEIGHT = 0; // add the hive to the vector a number of times, to bias towards it
+    const VECTOR_POWER = 5; // how much to move towards the vector
+
     // get the vector that is formed by the average of the trail points
     const vector = trailPoints.reduce(
       (acc, tp) => {
@@ -29,13 +31,12 @@ const wanderingAi = (b: Bee, state: WorldState) => {
       },
       { x: 0, y: 0 }
     );
-    const HIVE_WEIGHT = 1; // add the hive to the vector a number of times, to bias towards it
     vector.x /= trailPoints.length + HIVE_WEIGHT;
     vector.y /= trailPoints.length + HIVE_WEIGHT;
 
     const angle = Math.atan2(vector.y - b.y, vector.x - b.x);
-    b.x += Math.cos(angle);
-    b.y += Math.sin(angle);
+    b.x += Math.cos(angle) * VECTOR_POWER;
+    b.y += Math.sin(angle) * VECTOR_POWER;
   }
 };
 
