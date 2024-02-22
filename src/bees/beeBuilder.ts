@@ -1,4 +1,5 @@
 import { getNextObjectId } from "./getNextObjectId";
+import { trailPointBuilder } from "./trailPointBuilder";
 import type { Bee, Flower, WorldState } from "./types";
 import { getRandomArbitrary } from "./utils";
 
@@ -80,12 +81,7 @@ const gatheringPollenAI = (b: Bee, state: WorldState) => {
 
   // random chance of dropping a trail point
   if (Math.random() < 0.1) {
-    state.objects.push({
-      type: "trail-point",
-      id: getNextObjectId(),
-      x: b.x,
-      y: b.y,
-    });
+    state.objects.push(trailPointBuilder({ x: b.x, y: b.y }, state));
   }
 
   // move towards the centerpoint, with randomness

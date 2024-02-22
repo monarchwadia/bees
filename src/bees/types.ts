@@ -1,3 +1,5 @@
+type AiFunction<T extends BaseObject> = (obj: T, state: WorldState) => void;
+
 type BaseObject = {
   type: string;
   id: number;
@@ -8,11 +10,13 @@ type BaseObject = {
 export type Bee = {
   type: "bee";
   state: "wandering" | "gathering-pollen";
-  ai: (bee: Bee, state: WorldState) => void;
+  ai: AiFunction<Bee>;
 } & BaseObject;
 
 export type TrailPoint = {
   type: "trail-point";
+  ai: AiFunction<TrailPoint>;
+  strength: number;
 } & BaseObject;
 
 export type Flower = {

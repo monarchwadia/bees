@@ -21,7 +21,9 @@ export const sketchProvider = (state: WorldState) => (p: p5) => {
           p.ellipse(obj.x, obj.y, 20, 20);
           break;
         case "trail-point":
-          p.fill([255, 255, 255]);
+          // trail strength is from 1 to 100
+          const color = Math.floor((obj.strength / 100) * 255);
+          p.fill([color, color, color]);
           p.ellipse(obj.x, obj.y, 5);
           break;
       }
