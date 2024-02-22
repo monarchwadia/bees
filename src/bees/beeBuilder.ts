@@ -6,7 +6,7 @@ import { getRandomArbitrary } from "./utils";
 let nextId = 1;
 
 const FLIGHT_RANDOMNESS = 7;
-const DETECTION_RANGE = 25; // how far away the bee can see
+const DETECTION_RANGE = 20; // how far away the bee can see
 const COLLECTION_RANGE = 10; // how close the bee needs to be to collect pollen, or to deposit it in the hive
 
 const wanderingAi = (b: Bee, state: WorldState) => {
