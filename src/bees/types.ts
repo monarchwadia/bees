@@ -3,7 +3,7 @@ export type Bee = {
   x: number;
   y: number;
   color: [number, number, number, number?];
-  ai: (bee: Bee) => void;
+  ai: (bee: Bee, state: WorldState) => void;
 };
 
 export type WorldState = {

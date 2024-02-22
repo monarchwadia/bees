@@ -1,8 +1,8 @@
-import type { Bee } from "./types";
+import type { Bee, WorldState } from "./types";
 
 let nextId = 1;
 
-const ai = (b: Bee) => {
+const ai = (b: Bee, state: WorldState) => {
   b.x += Math.random() * 10 - 5;
   b.y += Math.random() * 10 - 5;
 };

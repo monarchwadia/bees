@@ -16,7 +16,7 @@ export class GameManager {
   tick() {
     this.state.bees.forEach((b) => {
       console.log(b);
-      b.ai(b);
+      b.ai(b, this.state);
     });
   }
 }
