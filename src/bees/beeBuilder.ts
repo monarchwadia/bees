@@ -1,21 +1,47 @@
 import { getNextObjectId } from "./getNextObjectId";
-import type { Bee, WorldState } from "./types";
+import type { Bee, Flower, WorldState } from "./types";
 import { getRandomArbitrary } from "./utils";
 
 let nextId = 1;
 
+const FLIGHT_RANDOMNESS = 7;
+const DETECTION_RANGE = 25; // how far away the bee can see
+const COLLECTION_RANGE = 10; // how close the bee needs to be to collect pollen, or to deposit it in the hive
+
 const wanderingAi = (b: Bee, state: WorldState) => {
   // regular wander
-  const WANDER = 7;
-  b.x += getRandomArbitrary(-WANDER, WANDER);
-  b.y += getRandomArbitrary(-WANDER, WANDER);
+  b.x += getRandomArbitrary(-FLIGHT_RANDOMNESS, FLIGHT_RANDOMNESS);
+  b.y += getRandomArbitrary(-FLIGHT_RANDOMNESS, FLIGHT_RANDOMNESS);
+
+  // if the bee is in range of a flower, switch to gathering pollen
+  const flowers: Flower[] = state.objects.filter(
+    (o) =>
+      o.type === "flower" &&
+      Math.abs(o.x - b.x) < DETECTION_RANGE &&
+      Math.abs(o.y - b.y) < DETECTION_RANGE
+  ) as Flower[];
+
+  let thisBeeJustCollectedPollen = false;
+  flowers.forEach((f) => {
+    // if the bee just collected pollen from some flower, don't collect again from another flower.
+    if (thisBeeJustCollectedPollen) return;
+
+    if (
+      Math.abs(f.x - b.x) < COLLECTION_RANGE &&
+      Math.abs(f.y - b.y) < COLLECTION_RANGE
+    ) {
+      b.state = "gathering-pollen";
+      f.pollen--;
+      thisBeeJustCollectedPollen = true;
+    }
+  });
 
   // if there are trail points, bias towards them
   const trailPoints = state.objects.filter(
     (o) =>
       o.type === "trail-point" &&
-      Math.abs(o.x - b.x) < 200 &&
-      Math.abs(o.y - b.y) < 200
+      Math.abs(o.x - b.x) < DETECTION_RANGE &&
+      Math.abs(o.y - b.y) < DETECTION_RANGE
   );
   if (trailPoints.length > 0) {
     const HIVE_WEIGHT = 0; // add the hive to the vector a number of times, to bias towards it
@@ -44,12 +70,31 @@ const gatheringPollenAI = (b: Bee, state: WorldState) => {
   const centerpoint = getCenterpoint(state);
 
   // if the bee is close to the centerpoint, switch back to wandering
-  if (Math.abs(b.x - centerpoint.x) < 5 && Math.abs(b.y - centerpoint.y) < 5) {
+  if (
+    Math.abs(b.x - centerpoint.x) < COLLECTION_RANGE &&
+    Math.abs(b.y - centerpoint.y) < COLLECTION_RANGE
+  ) {
     b.state = "wandering";
     return;
   }
 
-  b.y += Math.random() * 10 - 5;
+  // random chance of dropping a trail point
+  if (Math.random() < 0.1) {
+    state.objects.push({
+      type: "trail-point",
+      id: getNextObjectId(),
+      x: b.x,
+      y: b.y,
+    });
+  }
+
+  // move towards the centerpoint, with randomness
+  const angle = Math.atan2(centerpoint.y - b.y, centerpoint.x - b.x);
+  b.x += Math.cos(angle) * 2;
+  b.x += getRandomArbitrary(-FLIGHT_RANDOMNESS / 2, FLIGHT_RANDOMNESS / 2);
+
+  b.y += Math.sin(angle) * 2;
+  b.y += getRandomArbitrary(-FLIGHT_RANDOMNESS / 2, FLIGHT_RANDOMNESS / 2);
 };
 
 const ai = (b: Bee, state: WorldState) => {
@@ -69,7 +114,7 @@ export const beeBuilder = (b: Partial<Bee>, state: WorldState): Bee => {
     state: "wandering",
     id: getNextObjectId(),
     ...getCenterpoint(state),
-    ai: wanderingAi,
+    ai,
     ...b,
   };
 };

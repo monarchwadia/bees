@@ -6,6 +6,7 @@
   import { beeBuilder } from "./bees/beeBuilder";
   import Controls from "./lib/Controls.svelte";
   import { trailPointBuilder } from "./bees/trailPointBuilder";
+  import { flowerBuilder } from "./bees/flowerBuilder";
 
   let output: HTMLDivElement;
 
@@ -30,9 +31,8 @@
   state.objects.push(beeBuilder({}, state));
 
   // initial flowers
-  for (let i = 0; i < 400; i++) {
-    state.objects.push(trailPointBuilder({ x: i, y: i }, state));
-  }
+  state.objects.push(flowerBuilder({ x: 100, y: 100 }, state));
+  state.objects.push(beeBuilder({ x: 100, y: 100 }, state));
 
   // trails for bees
   state.objects.push();
