@@ -17,12 +17,10 @@
   });
 
   const addBeeViaLLM = async () => {
-    alert("Starting");
     const bee = await agentExecutor.invoke({
       prompt: "Add one bee to the map.",
     });
     console.log("bee results", bee);
-    alert("Done");
   };
 </script>
 
