@@ -10,6 +10,12 @@ export const flowerBuilder = (
     id: getNextObjectId(),
     type: "flower",
     pollen: 5,
+    ai: (b: Flower, state: WorldState) => {
+      // if flower is depleted, remove it
+      if (b.pollen <= 0) {
+        state.objects = state.objects.filter((o) => o.id !== b.id);
+      }
+    },
     ...getCenterpoint(state),
     ...tp,
   };

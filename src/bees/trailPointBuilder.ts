@@ -17,6 +17,11 @@ export const trailPointBuilder = (
       if (Math.random() < DECAY_RATE) {
         b.strength -= 1;
       }
+
+      if (b.strength <= 0) {
+        // remove itself
+        state.objects = state.objects.filter((o) => o.id !== b.id);
+      }
     },
     ...getCenterpoint(state),
     ...tp,

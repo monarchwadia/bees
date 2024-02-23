@@ -27,6 +27,7 @@ export class GameManager {
           obj.ai(obj, this.state);
           break;
         case "flower":
+          obj.ai(obj, this.state);
           break;
       }
     });

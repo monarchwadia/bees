@@ -22,6 +22,7 @@ export type TrailPoint = {
 export type Flower = {
   type: "flower";
   pollen: number;
+  ai: AiFunction<Flower>;
 } & BaseObject;
 
 type WorldObject = Bee | Flower | TrailPoint;
