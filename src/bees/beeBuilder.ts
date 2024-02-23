@@ -99,7 +99,7 @@ const wanderingAi = (b: Bee, state: WorldState) => {
 
     // Update the angle by adding a small amount to simulate rotation
     const angleIncrement = getRandomArbitrary(0.004, 0.008); // Adjust this value to control the rotation speed
-    angle += angleIncrement;
+    angle += angleIncrement * b.direction; // b.direction is either -1 or 1
 
     // Calculate the radius between the bee and the centerpoint
     const radius = Math.sqrt(
@@ -129,7 +129,7 @@ const gatheringPollenAI = (b: Bee, state: WorldState) => {
   }
 
   // random chance of dropping a trail point
-  if (Math.random() < 0.1) {
+  if (Math.random() < 0.2) {
     state.objects.push(trailPointBuilder({ x: b.x, y: b.y }, state));
   }
 
@@ -157,6 +157,7 @@ export const beeBuilder = (b: Partial<Bee>, state: WorldState): Bee => {
   return {
     type: "bee",
     state: "wandering",
+    direction: Math.random() > 0.5 ? -1 : 1,
     id: getNextObjectId(),
     ...getCenterpoint(state),
     ai,

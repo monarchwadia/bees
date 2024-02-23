@@ -6,6 +6,11 @@ export const flowerBuilder = (
   tp: Partial<Flower>,
   state: WorldState
 ): Flower => {
+  const coords = {
+    x: Math.round(Math.random() * state.config.width),
+    y: Math.round(Math.random() * state.config.height),
+  };
+
   return {
     id: getNextObjectId(),
     type: "flower",
@@ -16,7 +21,7 @@ export const flowerBuilder = (
         state.objects = state.objects.filter((o) => o.id !== b.id);
       }
     },
-    ...getCenterpoint(state),
+    ...coords,
     ...tp,
   };
 };

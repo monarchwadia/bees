@@ -11,6 +11,7 @@ type BaseObject = {
 export type Bee = {
   type: "bee";
   state: "wandering" | "gathering-pollen";
+  direction: -1 | 1; // -1 is counterclockwise, 1 is clockwise
   ai: AiFunction<Bee>;
 } & BaseObject;
 

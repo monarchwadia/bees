@@ -1,6 +1,7 @@
 <script lang="ts">
   import { agentExecutorBuilder } from "@src/bees/agentExecutorBuilder";
   import { beeBuilder } from "@src/bees/beeBuilder";
+  import { flowerBuilder } from "@src/bees/flowerBuilder";
   import type { WorldState } from "@src/bees/types";
   import { onMount } from "svelte";
 
@@ -31,6 +32,12 @@
     on:click={() => {
       state.objects.push(beeBuilder({}, state));
     }}>Add Bee</button
+  >
+  <button
+    class="btn"
+    on:click={() => {
+      state.objects.push(flowerBuilder({}, state));
+    }}>Add Flower</button
   >
 
   <button
