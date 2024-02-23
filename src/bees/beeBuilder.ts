@@ -6,8 +6,9 @@ import { getRandomArbitrary } from "./utils";
 let nextId = 1;
 
 const FLIGHT_RANDOMNESS = 7;
-const DETECTION_RANGE = 20; // how far away the bee can see
+const DETECTION_RANGE = 50; // how far away the bee can see
 const COLLECTION_RANGE = 10; // how close the bee needs to be to collect pollen, or to deposit it in the hive
+const TRAIL_POINT_POWER = 2; // how much the trail point influences the bee's movement
 
 const wanderingAi = (b: Bee, state: WorldState) => {
   // regular wander
@@ -38,34 +39,48 @@ const wanderingAi = (b: Bee, state: WorldState) => {
   });
 
   // if there are trail points, bias towards them
-  const trailPoints = state.objects.filter(
+  const nearbyTrailPoints = state.objects.filter(
     (o) =>
-      o.type === "trail-point" &&
+      (o.type === "trail-point" || o.type === "flower") &&
       Math.abs(o.x - b.x) < DETECTION_RANGE &&
       Math.abs(o.y - b.y) < DETECTION_RANGE
   ) as TrailPoint[];
-  if (trailPoints.length > 0) {
-    const HIVE_WEIGHT = 0; // add the hive to the vector a number of times, to bias towards it
-    const VECTOR_POWER = 5; // how much to move towards the vector
 
-    // get the vector that is formed by the average of the trail points
-    const vector = trailPoints
-      .filter((tp) => tp.strength > 0)
-      .reduce(
-        (acc, tp) => {
+  if (nearbyTrailPoints.length) {
+    // 1. get the vector created between the bee and the trail point farthest from the hive
+    const farthestTrailPoint = nearbyTrailPoints.reduce(
+      (acc, tp) => {
+        const distanceFromHive = Math.sqrt(
+          Math.pow(tp.x - state.config.width / 2, 2) +
+            Math.pow(tp.y - state.config.height / 2, 2)
+        );
+
+        if (distanceFromHive > acc.distance) {
           return {
-            x: acc.x + tp.x,
-            y: acc.y + tp.y,
+            x: tp.x,
+            y: tp.y,
+            distance: distanceFromHive,
           };
-        },
-        { x: 0, y: 0 }
-      );
-    vector.x /= trailPoints.length + HIVE_WEIGHT;
-    vector.y /= trailPoints.length + HIVE_WEIGHT;
+        } else {
+          return acc;
+        }
+      },
+      { x: 0, y: 0, distance: 0 }
+    );
 
-    const angle = Math.atan2(vector.y - b.y, vector.x - b.x);
-    b.x += Math.cos(angle) * VECTOR_POWER;
-    b.y += Math.sin(angle) * VECTOR_POWER;
+    // 2. move towards the farthest trail point
+    const farthestTrailPointVector = {
+      x: farthestTrailPoint.x - b.x,
+      y: farthestTrailPoint.y - b.y,
+    };
+
+    const angle = Math.atan2(
+      farthestTrailPointVector.y,
+      farthestTrailPointVector.x
+    );
+
+    b.x += Math.cos(angle) * TRAIL_POINT_POWER;
+    b.y += Math.sin(angle) * TRAIL_POINT_POWER;
   }
 };
 
