@@ -11,6 +11,9 @@ dependencies:
   '@langchain/openai':
     specifier: ^0.0.14
     version: 0.0.14
+  '@mlc-ai/web-llm':
+    specifier: ^0.2.20
+    version: 0.2.20
   langchain:
     specifier: ^0.1.21
     version: 0.1.21
@@ -632,6 +635,10 @@ packages:
       zod-to-json-schema: 3.22.4(zod@3.22.4)
     transitivePeerDependencies:
       - encoding
+    dev: false
+
+  /@mlc-ai/web-llm@0.2.20:
+    resolution: {integrity: sha512-vLfpuoMaYAkIW5x7UFwkCK6f+yBQ2I8p/Omh84s1y4C7tJFMqiyWWSloQkMiw7Mpo8eYBTaq9tXhI7l8xQYEgg==}
     dev: false
 
   /@nodelib/fs.scandir@2.1.5:

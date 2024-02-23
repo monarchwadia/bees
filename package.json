@@ -25,6 +25,7 @@
   "dependencies": {
     "@langchain/core": "^0.1.32",
     "@langchain/openai": "^0.0.14",
+    "@mlc-ai/web-llm": "^0.2.20",
     "langchain": "^0.1.21",
     "p5": "^1.9.0",
     "zod": "^3.22.4"
