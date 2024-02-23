@@ -10,6 +10,8 @@ const DETECTION_RANGE = 50; // how far away the bee can see
 const COLLECTION_RANGE = 10; // how close the bee needs to be to collect pollen, or to deposit it in the hive
 const TRAIL_POINT_POWER = 2; // how much the trail point influences the bee's movement
 
+const ANGULAR_SPEED = 0.01; // Adjust for how fast the bee circles around the centerpoint
+
 const wanderingAi = (b: Bee, state: WorldState) => {
   // regular wander
   b.x += getRandomArbitrary(-FLIGHT_RANDOMNESS, FLIGHT_RANDOMNESS);
@@ -81,6 +83,32 @@ const wanderingAi = (b: Bee, state: WorldState) => {
 
     b.x += Math.cos(angle) * TRAIL_POINT_POWER;
     b.y += Math.sin(angle) * TRAIL_POINT_POWER;
+  }
+
+  // if there are no trailpoints, circle
+  else {
+    // I want to make the bees circle around the centerpoint. They'll do this by
+    // calculating the angle between the centerpoint and the bee, and then adding
+    // a small amount to that angle each frame. This will make the bees circle
+    // around the centerpoint.
+    // Assuming b is your bee object with properties x and y
+    const centerpoint = getCenterpoint(state);
+
+    // Calculate the initial angle between the bee and the centerpoint
+    let angle = Math.atan2(b.y - centerpoint.y, b.x - centerpoint.x);
+
+    // Update the angle by adding a small amount to simulate rotation
+    const angleIncrement = 0.1; // Adjust this value to control the rotation speed
+    angle += angleIncrement;
+
+    // Calculate the radius between the bee and the centerpoint
+    const radius = Math.sqrt(
+      Math.pow(b.x - centerpoint.x, 2) + Math.pow(b.y - centerpoint.y, 2)
+    );
+
+    // Calculate the new position of the bee
+    b.x = centerpoint.x + radius * Math.cos(angle);
+    b.y = centerpoint.y + radius * Math.sin(angle);
   }
 };
 
