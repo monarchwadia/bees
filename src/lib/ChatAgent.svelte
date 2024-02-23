@@ -3,7 +3,7 @@
   import { onMount } from "svelte";
 
   $: progress = "Loading...";
-  let prompt = "What is the capital of canada?";
+  $: prompt = "What is the capital of canada?";
 
   const chat = new webllm.ChatModule();
   chat.setInitProgressCallback((report) => {
@@ -20,4 +20,14 @@
 
 <div>
   <p>{progress}</p>
+  <form
+    on:submit|preventDefault={async () => {
+      await chat.generate(prompt, (_step, message) => {
+        progress = message;
+      });
+    }}
+  >
+    <input type="text" bind:value={prompt} />
+    <button type="submit">Send</button>
+  </form>
 </div>
