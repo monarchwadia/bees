@@ -11,7 +11,7 @@ export const trailPointBuilder = (
   return {
     id: getNextObjectId(),
     type: "trail-point",
-    strength: 100,
+    strength: 90,
     ai: (b: TrailPoint, state: WorldState) => {
       // decay the trail point's pollen
       if (Math.random() < DECAY_RATE) {

@@ -25,10 +25,10 @@
   };
 
   // initial bees
-  state.objects.push(beeBuilder({}, state));
-  state.objects.push(beeBuilder({}, state));
-  state.objects.push(beeBuilder({}, state));
-  state.objects.push(beeBuilder({}, state));
+  state.objects.push(beeBuilder({ x: 800, y: 600 }, state));
+  state.objects.push(beeBuilder({ x: 800, y: 600 }, state));
+  state.objects.push(beeBuilder({ x: 800, y: 600 }, state));
+  state.objects.push(beeBuilder({ x: 800, y: 600 }, state));
 
   // initial flowers
   state.objects.push(flowerBuilder({ x: 100, y: 100 }, state));

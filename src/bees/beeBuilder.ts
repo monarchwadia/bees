@@ -98,7 +98,7 @@ const wanderingAi = (b: Bee, state: WorldState) => {
     let angle = Math.atan2(b.y - centerpoint.y, b.x - centerpoint.x);
 
     // Update the angle by adding a small amount to simulate rotation
-    const angleIncrement = 0.1; // Adjust this value to control the rotation speed
+    const angleIncrement = getRandomArbitrary(0.004, 0.008); // Adjust this value to control the rotation speed
     angle += angleIncrement;
 
     // Calculate the radius between the bee and the centerpoint
@@ -110,6 +110,10 @@ const wanderingAi = (b: Bee, state: WorldState) => {
     b.x = centerpoint.x + radius * Math.cos(angle);
     b.y = centerpoint.y + radius * Math.sin(angle);
   }
+
+  // max and min bounds
+  b.x = Math.max(0, Math.min(state.config.width, b.x));
+  b.y = Math.max(0, Math.min(state.config.height, b.y));
 };
 
 const gatheringPollenAI = (b: Bee, state: WorldState) => {
