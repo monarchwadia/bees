@@ -8,4 +8,6 @@ Controls and state probably need to have 2-way binding of some sort.
 
 # 2024-02-22
 
-Bee is now 
+I think I'm happy with the game & where it is now.
+
+I want to install https://webllm.mlc.ai/ and use it to control the game.
