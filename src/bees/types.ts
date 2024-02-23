@@ -5,6 +5,7 @@ type BaseObject = {
   id: number;
   x: number;
   y: number;
+  ai: AiFunction<any>;
 };
 
 export type Bee = {
@@ -15,8 +16,8 @@ export type Bee = {
 
 export type TrailPoint = {
   type: "trail-point";
-  ai: AiFunction<TrailPoint>;
   strength: number;
+  ai: AiFunction<TrailPoint>;
 } & BaseObject;
 
 export type Flower = {

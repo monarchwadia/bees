@@ -19,17 +19,7 @@ export class GameManager {
 
   updateState() {
     this.state.objects.forEach((obj) => {
-      switch (obj.type) {
-        case "bee":
-          obj.ai(obj, this.state);
-          break;
-        case "trail-point":
-          obj.ai(obj, this.state);
-          break;
-        case "flower":
-          obj.ai(obj, this.state);
-          break;
-      }
+      obj.ai(obj, this.state);
     });
   }
 }
