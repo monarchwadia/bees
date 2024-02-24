@@ -7,7 +7,6 @@
   import Controls from "./lib/Controls.svelte";
   import { trailPointBuilder } from "./bees/trailPointBuilder";
   import { flowerBuilder } from "./bees/flowerBuilder";
-  import ChatAgent from "./lib/ChatAgent.svelte";
 
   let output: HTMLDivElement;
 
@@ -49,5 +48,4 @@
 <div class="flex flex-row gap-2">
   <MapView {state} />
   <Controls {state} />
-  <ChatAgent />
 </div>
