@@ -38,5 +38,8 @@ export type WorldState = {
     isRunning: boolean;
     speed: number;
   };
+  hive: {
+    pollen: number;
+  };
   objects: WorldObject[];
 };
