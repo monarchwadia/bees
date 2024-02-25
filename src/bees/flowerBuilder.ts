@@ -8,8 +8,8 @@ export const flowerBuilder = (
   state: WorldState
 ): Flower => {
   const coords = {
-    x: Math.round(Math.random() * state.config.width),
-    y: Math.round(Math.random() * state.config.height),
+    x: Math.round(Math.random() * state.config.mapWidth),
+    y: Math.round(Math.random() * state.config.mapHeight),
   };
 
   return {

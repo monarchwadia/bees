@@ -2,8 +2,8 @@ import type { WorldState } from "./types";
 
 export const getCenterpoint = (state: WorldState) => {
   return {
-    x: state.config.width / 2,
-    y: state.config.height / 2,
+    x: state.config.mapWidth / 2,
+    y: state.config.mapHeight / 2,
   };
 };
 

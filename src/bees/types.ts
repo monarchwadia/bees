@@ -33,8 +33,8 @@ type WorldObject = Bee | Flower | TrailPoint;
 
 export type WorldState = {
   config: {
-    width: number;
-    height: number;
+    mapWidth: number;
+    mapHeight: number;
   };
   controls: {
     isRunning: boolean;

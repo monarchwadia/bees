@@ -30,8 +30,8 @@ export class GameManager {
       this.state.objects.push(
         flowerBuilder(
           {
-            x: Math.round(Math.random() * this.state.config.width),
-            y: Math.round(Math.random() * this.state.config.height),
+            x: Math.round(Math.random() * this.state.config.mapWidth),
+            y: Math.round(Math.random() * this.state.config.mapHeight),
           },
           this.state
         )

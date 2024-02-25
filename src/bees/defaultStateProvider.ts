@@ -1,11 +1,12 @@
 import type { WorldState } from "@bees/types";
 import { beeBuilder } from "@bees/beeBuilder";
 import { flowerBuilder } from "@bees/flowerBuilder";
+import { GLOBAL_MAP_HEIGHT, GLOBAL_MAP_WIDTH } from "./constants";
 
 export const defaultStateProvider = () => {
   const config = {
-    width: 800,
-    height: 800,
+    mapWidth: GLOBAL_MAP_WIDTH,
+    mapHeight: GLOBAL_MAP_HEIGHT,
   };
 
   const state: WorldState = {

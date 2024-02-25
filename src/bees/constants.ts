@@ -1,3 +1,6 @@
+export const GLOBAL_MAP_WIDTH = 800;
+export const GLOBAL_MAP_HEIGHT = 800;
+
 export const NEW_BEE_COST = 10;
 export const POLLEN_STOCKPILE_MINIMUM = 25;
 export const BEE_HUNGER_INCREASE_RATE = 0.01;

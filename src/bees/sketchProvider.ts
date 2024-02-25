@@ -4,7 +4,7 @@ import { FLOWER_STARTING_POLLEN } from "./constants";
 
 export const sketchProvider = (state: WorldState) => (p: p5) => {
   p.setup = () => {
-    p.createCanvas(state.config.width, state.config.height);
+    p.createCanvas(state.config.mapWidth, state.config.mapHeight);
   };
 
   p.draw = () => {
@@ -12,7 +12,7 @@ export const sketchProvider = (state: WorldState) => (p: p5) => {
 
     // paint the hive in the center
     p.fill([185, 125, 0]);
-    p.ellipse(state.config.width / 2, state.config.height / 2, 30, 30);
+    p.ellipse(state.config.mapWidth / 2, state.config.mapHeight / 2, 30, 30);
 
     // paint the bees
     state.objects.forEach((obj) => {

@@ -75,8 +75,8 @@ const wanderingAi = (b: Bee, state: WorldState) => {
     const farthestTrailPoint = nearbyTrailPoints.reduce(
       (acc, tp) => {
         const distanceFromHive = Math.sqrt(
-          Math.pow(tp.x - state.config.width / 2, 2) +
-            Math.pow(tp.y - state.config.height / 2, 2)
+          Math.pow(tp.x - state.config.mapWidth / 2, 2) +
+            Math.pow(tp.y - state.config.mapHeight / 2, 2)
         );
 
         if (distanceFromHive > acc.distance) {
@@ -137,8 +137,8 @@ const wanderingAi = (b: Bee, state: WorldState) => {
   }
 
   // max and min bounds
-  b.x = Math.max(0, Math.min(state.config.width, b.x));
-  b.y = Math.max(0, Math.min(state.config.height, b.y));
+  b.x = Math.max(0, Math.min(state.config.mapWidth, b.x));
+  b.y = Math.max(0, Math.min(state.config.mapHeight, b.y));
 };
 
 const gatheringPollenAI = (b: Bee, state: WorldState) => {
@@ -233,7 +233,7 @@ export const beeBuilder = (b: Partial<Bee>, state: WorldState): Bee => {
 
 const getCenterpoint = (state: WorldState) => {
   return {
-    x: state.config.width / 2,
-    y: state.config.height / 2,
+    x: state.config.mapWidth / 2,
+    y: state.config.mapHeight / 2,
   };
 };
