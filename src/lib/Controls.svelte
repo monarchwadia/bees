@@ -163,6 +163,15 @@
     step={0.0005}
     label="Creation Chance"
   />
+  <p class="control-section-header">Hive</p>
+  <SliderControl
+    path="config.hive.pollenStockpileMinimum"
+    {state}
+    min={0}
+    max={500}
+    step={1}
+    label="Pollen Stockpile Minimum"
+  />
 </div>
 
 <style lang="postcss">
