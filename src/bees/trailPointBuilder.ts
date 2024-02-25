@@ -1,6 +1,10 @@
+import {
+  TRAILPOINT_CREATION_MAX_STRENGTH,
+  TRAILPOINT_CREATION_MIN_STRENGTH,
+} from "./constants";
 import { getNextObjectId } from "./getNextObjectId";
 import type { Bee, TrailPoint, WorldState } from "./types";
-import { getCenterpoint } from "./utils";
+import { getCenterpoint, getRandomArbitrary } from "./utils";
 
 const DECAY_RATE = 0.2;
 
@@ -11,7 +15,10 @@ export const trailPointBuilder = (
   return {
     id: getNextObjectId(),
     type: "trail-point",
-    strength: 500,
+    strength: getRandomArbitrary(
+      TRAILPOINT_CREATION_MIN_STRENGTH,
+      TRAILPOINT_CREATION_MAX_STRENGTH
+    ),
     ai: (b: TrailPoint, state: WorldState) => {
       // decay the trail point's pollen
       if (Math.random() < DECAY_RATE) {

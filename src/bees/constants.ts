@@ -20,3 +20,6 @@ export const FLOWER_STARTING_POLLEN = 5;
 
 export const POLLEN_FOOD_VALUE = 50;
 export const POLLEN_STOCKPILE_MINIMUM = 25; // the hive will not create new bees if it has less than this amount of pollen
+
+export const TRAILPOINT_CREATION_MIN_STRENGTH = 250;
+export const TRAILPOINT_CREATION_MAX_STRENGTH = 750;

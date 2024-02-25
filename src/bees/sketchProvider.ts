@@ -1,6 +1,9 @@
 import type p5 from "p5";
 import type { WorldState } from "./types";
-import { FLOWER_STARTING_POLLEN } from "./constants";
+import {
+  FLOWER_STARTING_POLLEN,
+  TRAILPOINT_CREATION_MAX_STRENGTH,
+} from "./constants";
 
 export const sketchProvider = (state: WorldState) => (p: p5) => {
   p.setup = () => {
@@ -17,10 +20,14 @@ export const sketchProvider = (state: WorldState) => (p: p5) => {
     state.objects.forEach((obj) => {
       switch (obj.type) {
         case "trail-point": {
-          // trail strength is from 1 to 100
-          const opacity = Math.floor((obj.strength / 100) * 255);
+          const minOpacity = 55;
+          const opacity = Math.floor(
+            (obj.strength / TRAILPOINT_CREATION_MAX_STRENGTH) *
+              (255 - minOpacity) +
+              minOpacity
+          );
           p.fill([185, 100, 100, opacity]);
-          p.ellipse(obj.x, obj.y, 5);
+          p.ellipse(obj.x, obj.y, 4);
           break;
         }
         case "bee":
