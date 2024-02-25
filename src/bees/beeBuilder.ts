@@ -1,15 +1,9 @@
 import {
-  BEE_OBJ_INTERACTION_RANGE,
-  BEE_OBJ_DETECTION_RANGE,
-  BEE_FLIGHT_RANDOMNESS,
-  BEE_TRAIL_POINT_POWER,
   BEE_HUNGER_INCREASE_RATE,
-  BEE_ROTATION_SPEED_MAX,
-  BEE_ROTATION_SPEED_MIN,
-  BEE_TRAIL_POINT_DROP_CHANCE,
   BEE_HUNGER_DEATH_THRESHOLD,
-  BEE_HUNGER_FEEDING_THRESHOLD,
   POLLEN_FOOD_VALUE,
+  GLOBAL_MAP_WIDTH,
+  GLOBAL_MAP_HEIGHT,
 } from "./constants";
 import { getNextObjectId } from "./getNextObjectId";
 import { trailPointBuilder } from "./trailPointBuilder";
@@ -23,28 +17,34 @@ const moveTowardHive = (b: Bee, state: WorldState) => {
   const angle = Math.atan2(centerpoint.y - b.y, centerpoint.x - b.x);
   b.x += Math.cos(angle) * 2;
   b.x += getRandomArbitrary(
-    -BEE_FLIGHT_RANDOMNESS / 2,
-    BEE_FLIGHT_RANDOMNESS / 2
+    -state.config.bee.flightRandomness / 2,
+    state.config.bee.flightRandomness / 2
   );
 
   b.y += Math.sin(angle) * 2;
   b.y += getRandomArbitrary(
-    -BEE_FLIGHT_RANDOMNESS / 2,
-    BEE_FLIGHT_RANDOMNESS / 2
+    -state.config.bee.flightRandomness / 2,
+    state.config.bee.flightRandomness / 2
   );
 };
 
 const wanderingAi = (b: Bee, state: WorldState) => {
   // regular wander
-  b.x += getRandomArbitrary(-BEE_FLIGHT_RANDOMNESS, BEE_FLIGHT_RANDOMNESS);
-  b.y += getRandomArbitrary(-BEE_FLIGHT_RANDOMNESS, BEE_FLIGHT_RANDOMNESS);
+  b.x += getRandomArbitrary(
+    -state.config.bee.flightRandomness,
+    state.config.bee.flightRandomness
+  );
+  b.y += getRandomArbitrary(
+    -state.config.bee.flightRandomness,
+    state.config.bee.flightRandomness
+  );
 
   // if the bee is in range of a flower, switch to gathering pollen
   const flowers: Flower[] = state.objects.filter(
     (o) =>
       o.type === "flower" &&
-      Math.abs(o.x - b.x) < BEE_OBJ_DETECTION_RANGE &&
-      Math.abs(o.y - b.y) < BEE_OBJ_DETECTION_RANGE
+      Math.abs(o.x - b.x) < state.config.bee.objectDetectionRange &&
+      Math.abs(o.y - b.y) < state.config.bee.objectDetectionRange
   ) as Flower[];
 
   let thisBeeJustCollectedPollen = false;
@@ -53,8 +53,8 @@ const wanderingAi = (b: Bee, state: WorldState) => {
     if (thisBeeJustCollectedPollen) return;
 
     if (
-      Math.abs(f.x - b.x) < BEE_OBJ_INTERACTION_RANGE &&
-      Math.abs(f.y - b.y) < BEE_OBJ_INTERACTION_RANGE
+      Math.abs(f.x - b.x) < state.config.bee.objectInteractionRange &&
+      Math.abs(f.y - b.y) < state.config.bee.objectInteractionRange
     ) {
       b.state = "gathering-pollen";
       f.pollen--;
@@ -67,8 +67,8 @@ const wanderingAi = (b: Bee, state: WorldState) => {
   const nearbyTrailPoints = state.objects.filter(
     (o) =>
       (o.type === "trail-point" || o.type === "flower") &&
-      Math.abs(o.x - b.x) < BEE_OBJ_DETECTION_RANGE &&
-      Math.abs(o.y - b.y) < BEE_OBJ_DETECTION_RANGE
+      Math.abs(o.x - b.x) < state.config.bee.objectDetectionRange &&
+      Math.abs(o.y - b.y) < state.config.bee.objectDetectionRange
   ) as TrailPoint[];
 
   if (nearbyTrailPoints.length) {
@@ -76,8 +76,8 @@ const wanderingAi = (b: Bee, state: WorldState) => {
     const farthestTrailPoint = nearbyTrailPoints.reduce(
       (acc, tp) => {
         const distanceFromHive = Math.sqrt(
-          Math.pow(tp.x - state.config.mapWidth / 2, 2) +
-            Math.pow(tp.y - state.config.mapHeight / 2, 2)
+          Math.pow(tp.x - GLOBAL_MAP_WIDTH / 2, 2) +
+            Math.pow(tp.y - GLOBAL_MAP_HEIGHT / 2, 2)
         );
 
         if (distanceFromHive > acc.distance) {
@@ -104,8 +104,8 @@ const wanderingAi = (b: Bee, state: WorldState) => {
       farthestTrailPointVector.x
     );
 
-    b.x += Math.cos(angle) * BEE_TRAIL_POINT_POWER;
-    b.y += Math.sin(angle) * BEE_TRAIL_POINT_POWER;
+    b.x += Math.cos(angle) * state.config.bee.trailPointAttraction;
+    b.y += Math.sin(angle) * state.config.bee.trailPointAttraction;
   }
 
   // if there are no trailpoints, circle
@@ -122,8 +122,8 @@ const wanderingAi = (b: Bee, state: WorldState) => {
 
     // Update the angle by adding a small amount to simulate rotation
     const angleIncrement = getRandomArbitrary(
-      BEE_ROTATION_SPEED_MIN,
-      BEE_ROTATION_SPEED_MAX
+      state.config.bee.rotationSpeedMin,
+      state.config.bee.rotationSpeedMax
     );
     angle += angleIncrement * b.direction; // b.direction is either -1 or 1
 
@@ -138,8 +138,8 @@ const wanderingAi = (b: Bee, state: WorldState) => {
   }
 
   // max and min bounds
-  b.x = Math.max(0, Math.min(state.config.mapWidth, b.x));
-  b.y = Math.max(0, Math.min(state.config.mapHeight, b.y));
+  b.x = Math.max(0, Math.min(GLOBAL_MAP_WIDTH, b.x));
+  b.y = Math.max(0, Math.min(GLOBAL_MAP_HEIGHT, b.y));
 };
 
 const gatheringPollenAI = (b: Bee, state: WorldState) => {
@@ -147,8 +147,8 @@ const gatheringPollenAI = (b: Bee, state: WorldState) => {
 
   // if the bee is close to the centerpoint, switch back to wandering
   if (
-    Math.abs(b.x - centerpoint.x) < BEE_OBJ_INTERACTION_RANGE &&
-    Math.abs(b.y - centerpoint.y) < BEE_OBJ_INTERACTION_RANGE
+    Math.abs(b.x - centerpoint.x) < state.config.bee.objectInteractionRange &&
+    Math.abs(b.y - centerpoint.y) < state.config.bee.objectInteractionRange
   ) {
     b.state = "wandering";
     if (b.pollen > 0) {
@@ -159,7 +159,7 @@ const gatheringPollenAI = (b: Bee, state: WorldState) => {
   }
 
   // random chance of dropping a trail point
-  if (Math.random() < BEE_TRAIL_POINT_DROP_CHANCE) {
+  if (Math.random() < state.config.bee.trailPointDropChance) {
     state.objects.push(trailPointBuilder({ x: b.x, y: b.y }, state));
   }
 
@@ -186,8 +186,8 @@ const hungryAi = (b: Bee, state: WorldState) => {
   // if it has reached the hive, it eats
   const centerpoint = getCenterpoint(state);
   if (
-    Math.abs(b.x - centerpoint.x) < BEE_OBJ_INTERACTION_RANGE &&
-    Math.abs(b.y - centerpoint.y) < BEE_OBJ_INTERACTION_RANGE
+    Math.abs(b.x - centerpoint.x) < state.config.bee.objectInteractionRange &&
+    Math.abs(b.y - centerpoint.y) < state.config.bee.objectInteractionRange
   ) {
     if (state.hive.pollen > 0) {
       state.hive.pollen--;
@@ -203,7 +203,7 @@ const ai = (b: Bee, state: WorldState) => {
     b.hunger += 1;
   }
 
-  if (b.hunger > BEE_HUNGER_FEEDING_THRESHOLD) {
+  if (b.hunger > state.config.bee.hungerFeedingThreshold) {
     hungryAi(b, state);
     return;
   }
@@ -234,7 +234,7 @@ export const beeBuilder = (b: Partial<Bee>, state: WorldState): Bee => {
 
 const getCenterpoint = (state: WorldState) => {
   return {
-    x: state.config.mapWidth / 2,
-    y: state.config.mapHeight / 2,
+    x: GLOBAL_MAP_WIDTH / 2,
+    y: GLOBAL_MAP_HEIGHT / 2,
   };
 };

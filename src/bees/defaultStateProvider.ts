@@ -1,16 +1,28 @@
 import type { WorldState } from "@bees/types";
 import { beeBuilder } from "@bees/beeBuilder";
 import { flowerBuilder } from "@bees/flowerBuilder";
-import {
-  GLOBAL_DEFAULT_SPEED,
-  GLOBAL_MAP_HEIGHT,
-  GLOBAL_MAP_WIDTH,
-} from "./constants";
+import { GLOBAL_DEFAULT_SPEED } from "./constants";
 
 export const defaultStateProvider = () => {
   const config = {
-    mapWidth: GLOBAL_MAP_WIDTH,
-    mapHeight: GLOBAL_MAP_HEIGHT,
+    bee: {
+      flightRandomness: 7,
+      objectDetectionRange: 50,
+      objectInteractionRange: 10,
+      trailPointAttraction: 2,
+      rotationSpeedMin: 0.004,
+      rotationSpeedMax: 0.008,
+      trailPointDropChance: 0.2,
+      hungerFeedingThreshold: 80,
+      trailpointCreationMinStrength: 250,
+      trailpointCreationMaxStrength: 750,
+    },
+    hive: {
+      pollenStockpileMinimum: 25,
+    },
+    flower: {
+      creationChance: 0.001,
+    },
   };
 
   const state: WorldState = {

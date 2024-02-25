@@ -1,9 +1,5 @@
 import { beeBuilder } from "./beeBuilder";
-import {
-  FLOWER_CREATION_CHANCE,
-  NEW_BEE_COST,
-  POLLEN_STOCKPILE_MINIMUM,
-} from "./constants";
+import { GLOBAL_MAP_HEIGHT, GLOBAL_MAP_WIDTH, NEW_BEE_COST } from "./constants";
 import { flowerBuilder } from "./flowerBuilder";
 import type { WorldState } from "./types";
 
@@ -32,12 +28,12 @@ export class GameManager {
     });
 
     // once in a while, generate a flower
-    if (Math.random() < FLOWER_CREATION_CHANCE) {
+    if (Math.random() < this.state.config.flower.creationChance) {
       this.state.objects.push(
         flowerBuilder(
           {
-            x: Math.round(Math.random() * this.state.config.mapWidth),
-            y: Math.round(Math.random() * this.state.config.mapHeight),
+            x: Math.round(Math.random() * GLOBAL_MAP_WIDTH),
+            y: Math.round(Math.random() * GLOBAL_MAP_HEIGHT),
           },
           this.state
         )
@@ -45,7 +41,8 @@ export class GameManager {
     }
 
     // if the hive has enough pollen, create a bee
-    const minQuantity = NEW_BEE_COST + POLLEN_STOCKPILE_MINIMUM;
+    const minQuantity =
+      NEW_BEE_COST + this.state.config.hive.pollenStockpileMinimum;
     if (this.state.hive.pollen >= minQuantity) {
       this.state.objects.push(beeBuilder({}, this.state));
       this.state.hive.pollen -= NEW_BEE_COST;

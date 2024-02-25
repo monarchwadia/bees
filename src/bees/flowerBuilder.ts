@@ -1,4 +1,8 @@
-import { FLOWER_STARTING_POLLEN } from "./constants";
+import {
+  FLOWER_STARTING_POLLEN,
+  GLOBAL_MAP_HEIGHT,
+  GLOBAL_MAP_WIDTH,
+} from "./constants";
 import { getNextObjectId } from "./getNextObjectId";
 import type { Bee, Flower, TrailPoint, WorldState } from "./types";
 import { getCenterpoint } from "./utils";
@@ -8,8 +12,8 @@ export const flowerBuilder = (
   state: WorldState
 ): Flower => {
   const coords = {
-    x: Math.round(Math.random() * state.config.mapWidth),
-    y: Math.round(Math.random() * state.config.mapHeight),
+    x: Math.round(Math.random() * GLOBAL_MAP_WIDTH),
+    y: Math.round(Math.random() * GLOBAL_MAP_HEIGHT),
   };
 
   return {

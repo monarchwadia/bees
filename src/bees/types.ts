@@ -33,8 +33,24 @@ type WorldObject = Bee | Flower | TrailPoint;
 
 export type WorldState = {
   config: {
-    mapWidth: number;
-    mapHeight: number;
+    bee: {
+      flightRandomness: number;
+      objectDetectionRange: number;
+      objectInteractionRange: number;
+      trailPointAttraction: number;
+      rotationSpeedMin: number;
+      rotationSpeedMax: number;
+      trailPointDropChance: number;
+      hungerFeedingThreshold: number;
+      trailpointCreationMinStrength: number;
+      trailpointCreationMaxStrength: number;
+    };
+    hive: {
+      pollenStockpileMinimum: number;
+    };
+    flower: {
+      creationChance: number;
+    };
   };
   controls: {
     isRunning: boolean;

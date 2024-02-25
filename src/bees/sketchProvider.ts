@@ -2,19 +2,20 @@ import type p5 from "p5";
 import type { WorldState } from "./types";
 import {
   FLOWER_STARTING_POLLEN,
-  TRAILPOINT_CREATION_MAX_STRENGTH,
+  GLOBAL_MAP_HEIGHT,
+  GLOBAL_MAP_WIDTH,
 } from "./constants";
 
 export const sketchProvider = (state: WorldState) => (p: p5) => {
   p.setup = () => {
-    p.createCanvas(state.config.mapWidth, state.config.mapHeight);
+    p.createCanvas(GLOBAL_MAP_WIDTH, GLOBAL_MAP_HEIGHT);
   };
 
   p.draw = () => {
     p.background(0);
     // paint the hive in the center
     p.fill([185, 125, 0]);
-    p.ellipse(state.config.mapWidth / 2, state.config.mapHeight / 2, 30, 30);
+    p.ellipse(GLOBAL_MAP_WIDTH / 2, GLOBAL_MAP_HEIGHT / 2, 30, 30);
 
     // paint objects
     state.objects.forEach((obj) => {
@@ -22,7 +23,7 @@ export const sketchProvider = (state: WorldState) => (p: p5) => {
         case "trail-point": {
           const minOpacity = 55;
           const opacity = Math.floor(
-            (obj.strength / TRAILPOINT_CREATION_MAX_STRENGTH) *
+            (obj.strength / state.config.bee.trailpointCreationMaxStrength) *
               (255 - minOpacity) +
               minOpacity
           );
