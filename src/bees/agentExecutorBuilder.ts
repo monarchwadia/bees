@@ -6,7 +6,7 @@ import { createOpenAIToolsAgent, AgentExecutor } from "langchain/agents";
 import { PromptTemplate, ChatPromptTemplate } from "@langchain/core/prompts";
 import z from "zod";
 
-const OPENAI_API_KEY = import.meta.env.VITE_OPENAI_API_KEY;
+const OPENAI_KEY = import.meta.env.VITE_OPENAI_KEY;
 
 export const agentExecutorBuilder = async (state: WorldState) => {
   // add all the tools here
@@ -25,7 +25,7 @@ export const agentExecutorBuilder = async (state: WorldState) => {
   const llm = new ChatOpenAI({
     modelName: "gpt-3.5-turbo",
     temperature: 0,
-    openAIApiKey: OPENAI_API_KEY,
+    openAIApiKey: OPENAI_KEY,
   });
 
   // const prompt = ChatPromptTemplate.fromMessages([
