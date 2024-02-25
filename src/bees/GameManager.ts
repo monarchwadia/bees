@@ -1,5 +1,5 @@
 import { beeBuilder } from "./beeBuilder";
-import { NEW_BEE_COST } from "./constants";
+import { NEW_BEE_COST, POLLEN_STOCKPILE_MINIMUM } from "./constants";
 import { flowerBuilder } from "./flowerBuilder";
 import type { WorldState } from "./types";
 
@@ -39,7 +39,8 @@ export class GameManager {
     }
 
     // if the hive has enough pollen, create a bee
-    if (this.state.hive.pollen >= NEW_BEE_COST) {
+    const minQuantity = NEW_BEE_COST + POLLEN_STOCKPILE_MINIMUM;
+    if (this.state.hive.pollen >= minQuantity) {
       this.state.objects.push(beeBuilder({}, this.state));
       this.state.hive.pollen -= NEW_BEE_COST;
     }
