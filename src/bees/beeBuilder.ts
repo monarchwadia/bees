@@ -1,17 +1,19 @@
-import { HUNGER_INCREASE_RATE } from "./constants";
+import {
+  BEE_OBJ_INTERACTION_RANGE,
+  BEE_OBJ_DETECTION_RANGE,
+  BEE_FLIGHT_RANDOMNESS,
+  BEE_TRAIL_POINT_POWER,
+  BEE_HUNGER_INCREASE_RATE,
+  BEE_ROTATION_SPEED_MAX,
+  BEE_ROTATION_SPEED_MIN,
+  BEE_TRAIL_POINT_DROP_CHANCE,
+  BEE_HUNGER_DEATH_THRESHOLD,
+  BEE_HUNGER_FEEDING_THRESHOLD,
+} from "./constants";
 import { getNextObjectId } from "./getNextObjectId";
 import { trailPointBuilder } from "./trailPointBuilder";
 import type { Bee, Flower, TrailPoint, WorldState } from "./types";
 import { getRandomArbitrary } from "./utils";
-
-let nextId = 1;
-
-const FLIGHT_RANDOMNESS = 7;
-const DETECTION_RANGE = 50; // how far away the bee can see
-const COLLECTION_RANGE = 10; // how close the bee needs to be to collect pollen, or to deposit it in the hive
-const TRAIL_POINT_POWER = 2; // how much the trail point influences the bee's movement
-
-const ANGULAR_SPEED = 0.01; // Adjust for how fast the bee circles around the centerpoint
 
 const moveTowardHive = (b: Bee, state: WorldState) => {
   const centerpoint = getCenterpoint(state);
@@ -19,23 +21,29 @@ const moveTowardHive = (b: Bee, state: WorldState) => {
   // move towards the centerpoint, with randomness
   const angle = Math.atan2(centerpoint.y - b.y, centerpoint.x - b.x);
   b.x += Math.cos(angle) * 2;
-  b.x += getRandomArbitrary(-FLIGHT_RANDOMNESS / 2, FLIGHT_RANDOMNESS / 2);
+  b.x += getRandomArbitrary(
+    -BEE_FLIGHT_RANDOMNESS / 2,
+    BEE_FLIGHT_RANDOMNESS / 2
+  );
 
   b.y += Math.sin(angle) * 2;
-  b.y += getRandomArbitrary(-FLIGHT_RANDOMNESS / 2, FLIGHT_RANDOMNESS / 2);
+  b.y += getRandomArbitrary(
+    -BEE_FLIGHT_RANDOMNESS / 2,
+    BEE_FLIGHT_RANDOMNESS / 2
+  );
 };
 
 const wanderingAi = (b: Bee, state: WorldState) => {
   // regular wander
-  b.x += getRandomArbitrary(-FLIGHT_RANDOMNESS, FLIGHT_RANDOMNESS);
-  b.y += getRandomArbitrary(-FLIGHT_RANDOMNESS, FLIGHT_RANDOMNESS);
+  b.x += getRandomArbitrary(-BEE_FLIGHT_RANDOMNESS, BEE_FLIGHT_RANDOMNESS);
+  b.y += getRandomArbitrary(-BEE_FLIGHT_RANDOMNESS, BEE_FLIGHT_RANDOMNESS);
 
   // if the bee is in range of a flower, switch to gathering pollen
   const flowers: Flower[] = state.objects.filter(
     (o) =>
       o.type === "flower" &&
-      Math.abs(o.x - b.x) < DETECTION_RANGE &&
-      Math.abs(o.y - b.y) < DETECTION_RANGE
+      Math.abs(o.x - b.x) < BEE_OBJ_DETECTION_RANGE &&
+      Math.abs(o.y - b.y) < BEE_OBJ_DETECTION_RANGE
   ) as Flower[];
 
   let thisBeeJustCollectedPollen = false;
@@ -44,8 +52,8 @@ const wanderingAi = (b: Bee, state: WorldState) => {
     if (thisBeeJustCollectedPollen) return;
 
     if (
-      Math.abs(f.x - b.x) < COLLECTION_RANGE &&
-      Math.abs(f.y - b.y) < COLLECTION_RANGE
+      Math.abs(f.x - b.x) < BEE_OBJ_INTERACTION_RANGE &&
+      Math.abs(f.y - b.y) < BEE_OBJ_INTERACTION_RANGE
     ) {
       b.state = "gathering-pollen";
       f.pollen--;
@@ -58,8 +66,8 @@ const wanderingAi = (b: Bee, state: WorldState) => {
   const nearbyTrailPoints = state.objects.filter(
     (o) =>
       (o.type === "trail-point" || o.type === "flower") &&
-      Math.abs(o.x - b.x) < DETECTION_RANGE &&
-      Math.abs(o.y - b.y) < DETECTION_RANGE
+      Math.abs(o.x - b.x) < BEE_OBJ_DETECTION_RANGE &&
+      Math.abs(o.y - b.y) < BEE_OBJ_DETECTION_RANGE
   ) as TrailPoint[];
 
   if (nearbyTrailPoints.length) {
@@ -95,8 +103,8 @@ const wanderingAi = (b: Bee, state: WorldState) => {
       farthestTrailPointVector.x
     );
 
-    b.x += Math.cos(angle) * TRAIL_POINT_POWER;
-    b.y += Math.sin(angle) * TRAIL_POINT_POWER;
+    b.x += Math.cos(angle) * BEE_TRAIL_POINT_POWER;
+    b.y += Math.sin(angle) * BEE_TRAIL_POINT_POWER;
   }
 
   // if there are no trailpoints, circle
@@ -112,7 +120,10 @@ const wanderingAi = (b: Bee, state: WorldState) => {
     let angle = Math.atan2(b.y - centerpoint.y, b.x - centerpoint.x);
 
     // Update the angle by adding a small amount to simulate rotation
-    const angleIncrement = getRandomArbitrary(0.004, 0.008); // Adjust this value to control the rotation speed
+    const angleIncrement = getRandomArbitrary(
+      BEE_ROTATION_SPEED_MIN,
+      BEE_ROTATION_SPEED_MAX
+    );
     angle += angleIncrement * b.direction; // b.direction is either -1 or 1
 
     // Calculate the radius between the bee and the centerpoint
@@ -135,8 +146,8 @@ const gatheringPollenAI = (b: Bee, state: WorldState) => {
 
   // if the bee is close to the centerpoint, switch back to wandering
   if (
-    Math.abs(b.x - centerpoint.x) < COLLECTION_RANGE &&
-    Math.abs(b.y - centerpoint.y) < COLLECTION_RANGE
+    Math.abs(b.x - centerpoint.x) < BEE_OBJ_INTERACTION_RANGE &&
+    Math.abs(b.y - centerpoint.y) < BEE_OBJ_INTERACTION_RANGE
   ) {
     b.state = "wandering";
     if (b.pollen > 0) {
@@ -147,7 +158,7 @@ const gatheringPollenAI = (b: Bee, state: WorldState) => {
   }
 
   // random chance of dropping a trail point
-  if (Math.random() < 0.2) {
+  if (Math.random() < BEE_TRAIL_POINT_DROP_CHANCE) {
     state.objects.push(trailPointBuilder({ x: b.x, y: b.y }, state));
   }
 
@@ -156,7 +167,7 @@ const gatheringPollenAI = (b: Bee, state: WorldState) => {
 
 const hungryAi = (b: Bee, state: WorldState) => {
   // it dies if it's too hungry
-  if (b.hunger > 100) {
+  if (b.hunger > BEE_HUNGER_DEATH_THRESHOLD) {
     state.objects = state.objects.filter((o) => o.id !== b.id);
     return;
   }
@@ -174,8 +185,8 @@ const hungryAi = (b: Bee, state: WorldState) => {
   // if it has reached the hive, it eats
   const centerpoint = getCenterpoint(state);
   if (
-    Math.abs(b.x - centerpoint.x) < COLLECTION_RANGE &&
-    Math.abs(b.y - centerpoint.y) < COLLECTION_RANGE
+    Math.abs(b.x - centerpoint.x) < BEE_OBJ_INTERACTION_RANGE &&
+    Math.abs(b.y - centerpoint.y) < BEE_OBJ_INTERACTION_RANGE
   ) {
     if (state.hive.pollen > 0) {
       state.hive.pollen--;
@@ -187,12 +198,11 @@ const hungryAi = (b: Bee, state: WorldState) => {
 
 const ai = (b: Bee, state: WorldState) => {
   // chance to increase hunger
-  if (Math.random() < HUNGER_INCREASE_RATE) {
+  if (Math.random() < BEE_HUNGER_INCREASE_RATE) {
     b.hunger += 1;
   }
 
-  if (b.hunger > 50) {
-    console.log("HUNGER");
+  if (b.hunger > BEE_HUNGER_FEEDING_THRESHOLD) {
     hungryAi(b, state);
     return;
   }
