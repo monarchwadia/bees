@@ -1,3 +1,5 @@
+import { beeBuilder } from "./beeBuilder";
+import { NEW_BEE_COST } from "./constants";
 import { flowerBuilder } from "./flowerBuilder";
 import type { WorldState } from "./types";
 
@@ -34,6 +36,12 @@ export class GameManager {
           this.state
         )
       );
+    }
+
+    // if the hive has enough pollen, create a bee
+    if (this.state.hive.pollen >= NEW_BEE_COST) {
+      this.state.objects.push(beeBuilder({}, this.state));
+      this.state.hive.pollen -= NEW_BEE_COST;
     }
   }
 }

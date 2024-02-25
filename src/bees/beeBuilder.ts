@@ -36,6 +36,7 @@ const wanderingAi = (b: Bee, state: WorldState) => {
     ) {
       b.state = "gathering-pollen";
       f.pollen--;
+      b.pollen = 1;
       thisBeeJustCollectedPollen = true;
     }
   });
@@ -125,6 +126,10 @@ const gatheringPollenAI = (b: Bee, state: WorldState) => {
     Math.abs(b.y - centerpoint.y) < COLLECTION_RANGE
   ) {
     b.state = "wandering";
+    if (b.pollen > 0) {
+      state.hive.pollen++;
+      b.pollen--;
+    }
     return;
   }
 
@@ -157,6 +162,7 @@ export const beeBuilder = (b: Partial<Bee>, state: WorldState): Bee => {
   return {
     type: "bee",
     state: "wandering",
+    pollen: 0,
     direction: Math.random() > 0.5 ? -1 : 1,
     id: getNextObjectId(),
     ...getCenterpoint(state),

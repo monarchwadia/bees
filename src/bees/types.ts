@@ -13,6 +13,7 @@ export type Bee = {
   state: "wandering" | "gathering-pollen";
   direction: -1 | 1; // -1 is counterclockwise, 1 is clockwise
   ai: AiFunction<Bee>;
+  pollen: number;
 } & BaseObject;
 
 export type TrailPoint = {
