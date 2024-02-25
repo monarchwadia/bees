@@ -13,11 +13,13 @@ export class GameManager {
   loop() {
     setTimeout(() => {
       if (this.state.controls.isRunning && this.state.controls.speed > 0) {
-        this.updateState();
+        for (let i = 0; i < this.state.controls.speed; i++) {
+          this.updateState();
+        }
       }
 
       this.loop();
-    }, 1000 / this.state.controls.speed);
+    }, 1);
   }
 
   updateState() {

@@ -14,7 +14,7 @@ export const sketchProvider = (state: WorldState) => (p: p5) => {
     p.fill([185, 125, 0]);
     p.ellipse(state.config.mapWidth / 2, state.config.mapHeight / 2, 30, 30);
 
-    // paint the bees
+    // paint objects
     state.objects.forEach((obj) => {
       switch (obj.type) {
         case "trail-point": {
@@ -36,5 +36,18 @@ export const sketchProvider = (state: WorldState) => (p: p5) => {
         }
       }
     });
+
+    // paint stats
+    p.fill(255);
+    const numBees = state.objects.filter((obj) => obj.type === "bee").length;
+    p.textSize(20);
+    p.text(
+      `Bees: ${numBees}
+Pollen: ${state.hive.pollen}
+FPS: ${p.frameRate().toFixed(2)}
+`,
+      20,
+      20
+    );
   };
 };

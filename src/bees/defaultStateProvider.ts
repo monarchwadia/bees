@@ -16,7 +16,7 @@ export const defaultStateProvider = () => {
     },
     controls: {
       isRunning: true,
-      speed: 100,
+      speed: 1,
     },
     objects: [],
   };
