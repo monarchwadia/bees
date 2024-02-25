@@ -12,7 +12,7 @@ export const defaultStateProvider = () => {
   const state: WorldState = {
     config,
     hive: {
-      pollen: 0,
+      pollen: 65,
     },
     controls: {
       isRunning: true,
@@ -20,16 +20,6 @@ export const defaultStateProvider = () => {
     },
     objects: [],
   };
-
-  // initial bees
-  state.objects.push(beeBuilder({ x: 800, y: 600 }, state));
-  state.objects.push(beeBuilder({ x: 800, y: 600 }, state));
-  state.objects.push(beeBuilder({ x: 800, y: 600 }, state));
-  state.objects.push(beeBuilder({ x: 800, y: 600 }, state));
-
-  // initial flowers
-  state.objects.push(flowerBuilder({ x: 100, y: 100 }, state));
-  state.objects.push(beeBuilder({ x: 100, y: 100 }, state));
 
   // trails for bees
   state.objects.push();

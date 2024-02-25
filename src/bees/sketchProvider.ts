@@ -9,7 +9,6 @@ export const sketchProvider = (state: WorldState) => (p: p5) => {
 
   p.draw = () => {
     p.background(0);
-
     // paint the hive in the center
     p.fill([185, 125, 0]);
     p.ellipse(state.config.mapWidth / 2, state.config.mapHeight / 2, 30, 30);
