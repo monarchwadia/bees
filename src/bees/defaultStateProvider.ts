@@ -1,7 +1,11 @@
 import type { WorldState } from "@bees/types";
 import { beeBuilder } from "@bees/beeBuilder";
 import { flowerBuilder } from "@bees/flowerBuilder";
-import { GLOBAL_MAP_HEIGHT, GLOBAL_MAP_WIDTH } from "./constants";
+import {
+  GLOBAL_DEFAULT_SPEED,
+  GLOBAL_MAP_HEIGHT,
+  GLOBAL_MAP_WIDTH,
+} from "./constants";
 
 export const defaultStateProvider = () => {
   const config = {
@@ -16,7 +20,7 @@ export const defaultStateProvider = () => {
     },
     controls: {
       isRunning: true,
-      speed: 1,
+      speed: GLOBAL_DEFAULT_SPEED,
     },
     objects: [],
   };

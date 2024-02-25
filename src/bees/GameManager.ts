@@ -1,5 +1,9 @@
 import { beeBuilder } from "./beeBuilder";
-import { NEW_BEE_COST, POLLEN_STOCKPILE_MINIMUM } from "./constants";
+import {
+  FLOWER_CREATION_CHANCE,
+  NEW_BEE_COST,
+  POLLEN_STOCKPILE_MINIMUM,
+} from "./constants";
 import { flowerBuilder } from "./flowerBuilder";
 import type { WorldState } from "./types";
 
@@ -28,7 +32,7 @@ export class GameManager {
     });
 
     // once in a while, generate a flower
-    if (Math.random() < 0.001) {
+    if (Math.random() < FLOWER_CREATION_CHANCE) {
       this.state.objects.push(
         flowerBuilder(
           {

@@ -9,6 +9,7 @@ import {
   BEE_TRAIL_POINT_DROP_CHANCE,
   BEE_HUNGER_DEATH_THRESHOLD,
   BEE_HUNGER_FEEDING_THRESHOLD,
+  POLLEN_FOOD_VALUE,
 } from "./constants";
 import { getNextObjectId } from "./getNextObjectId";
 import { trailPointBuilder } from "./trailPointBuilder";
@@ -175,7 +176,7 @@ const hungryAi = (b: Bee, state: WorldState) => {
   // if the bee is hungry, it eats any pollen it's carrying
   if (b.pollen > 0) {
     b.pollen--;
-    b.hunger = 0;
+    b.hunger -= POLLEN_FOOD_VALUE;
     b.state = "wandering";
     return;
   }
@@ -190,7 +191,7 @@ const hungryAi = (b: Bee, state: WorldState) => {
   ) {
     if (state.hive.pollen > 0) {
       state.hive.pollen--;
-      b.hunger = 0;
+      b.hunger -= POLLEN_FOOD_VALUE;
       b.state = "wandering";
     }
   }
