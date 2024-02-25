@@ -1,3 +1,4 @@
+import { HUNGER_INCREASE_RATE } from "./constants";
 import { getNextObjectId } from "./getNextObjectId";
 import { trailPointBuilder } from "./trailPointBuilder";
 import type { Bee, Flower, TrailPoint, WorldState } from "./types";
@@ -11,6 +12,18 @@ const COLLECTION_RANGE = 10; // how close the bee needs to be to collect pollen,
 const TRAIL_POINT_POWER = 2; // how much the trail point influences the bee's movement
 
 const ANGULAR_SPEED = 0.01; // Adjust for how fast the bee circles around the centerpoint
+
+const moveTowardHive = (b: Bee, state: WorldState) => {
+  const centerpoint = getCenterpoint(state);
+
+  // move towards the centerpoint, with randomness
+  const angle = Math.atan2(centerpoint.y - b.y, centerpoint.x - b.x);
+  b.x += Math.cos(angle) * 2;
+  b.x += getRandomArbitrary(-FLIGHT_RANDOMNESS / 2, FLIGHT_RANDOMNESS / 2);
+
+  b.y += Math.sin(angle) * 2;
+  b.y += getRandomArbitrary(-FLIGHT_RANDOMNESS / 2, FLIGHT_RANDOMNESS / 2);
+};
 
 const wanderingAi = (b: Bee, state: WorldState) => {
   // regular wander
@@ -138,16 +151,52 @@ const gatheringPollenAI = (b: Bee, state: WorldState) => {
     state.objects.push(trailPointBuilder({ x: b.x, y: b.y }, state));
   }
 
-  // move towards the centerpoint, with randomness
-  const angle = Math.atan2(centerpoint.y - b.y, centerpoint.x - b.x);
-  b.x += Math.cos(angle) * 2;
-  b.x += getRandomArbitrary(-FLIGHT_RANDOMNESS / 2, FLIGHT_RANDOMNESS / 2);
+  moveTowardHive(b, state);
+};
 
-  b.y += Math.sin(angle) * 2;
-  b.y += getRandomArbitrary(-FLIGHT_RANDOMNESS / 2, FLIGHT_RANDOMNESS / 2);
+const hungryAi = (b: Bee, state: WorldState) => {
+  // it dies if it's too hungry
+  if (b.hunger > 100) {
+    state.objects = state.objects.filter((o) => o.id !== b.id);
+    return;
+  }
+
+  // if the bee is hungry, it eats any pollen it's carrying
+  if (b.pollen > 0) {
+    b.pollen--;
+    b.hunger = 0;
+    b.state = "wandering";
+    return;
+  }
+  // if there is no pollen being carried, the bee moves towards the hive to eat
+  moveTowardHive(b, state);
+
+  // if it has reached the hive, it eats
+  const centerpoint = getCenterpoint(state);
+  if (
+    Math.abs(b.x - centerpoint.x) < COLLECTION_RANGE &&
+    Math.abs(b.y - centerpoint.y) < COLLECTION_RANGE
+  ) {
+    if (state.hive.pollen > 0) {
+      state.hive.pollen--;
+      b.hunger = 0;
+      b.state = "wandering";
+    }
+  }
 };
 
 const ai = (b: Bee, state: WorldState) => {
+  // chance to increase hunger
+  if (Math.random() < HUNGER_INCREASE_RATE) {
+    b.hunger += 1;
+  }
+
+  if (b.hunger > 50) {
+    console.log("HUNGER");
+    hungryAi(b, state);
+    return;
+  }
+
   switch (b.state) {
     case "wandering":
       wanderingAi(b, state);
@@ -163,6 +212,7 @@ export const beeBuilder = (b: Partial<Bee>, state: WorldState): Bee => {
     type: "bee",
     state: "wandering",
     pollen: 0,
+    hunger: 0,
     direction: Math.random() > 0.5 ? -1 : 1,
     id: getNextObjectId(),
     ...getCenterpoint(state),

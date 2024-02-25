@@ -14,6 +14,7 @@ export type Bee = {
   direction: -1 | 1; // -1 is counterclockwise, 1 is clockwise
   ai: AiFunction<Bee>;
   pollen: number;
+  hunger: number; // if it reaches 100, it dies
 } & BaseObject;
 
 export type TrailPoint = {
