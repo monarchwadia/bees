@@ -1,6 +1,4 @@
 import type { WorldState } from "@bees/types";
-import { beeBuilder } from "@bees/beeBuilder";
-import { flowerBuilder } from "@bees/flowerBuilder";
 import { GLOBAL_DEFAULT_SPEED } from "./constants";
 
 export const defaultStateProvider = () => {
