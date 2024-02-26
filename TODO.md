@@ -11,3 +11,9 @@ Controls and state probably need to have 2-way binding of some sort.
 I think I'm happy with the game & where it is now.
 
 I want to install https://webllm.mlc.ai/ and use it to control the game.
+
+# 2024-02-25
+
+Sim params can now be controlled via slider
+
+After talking to Yeshe i should probably rename from bees to ants.
