@@ -15,9 +15,8 @@
 
   const addBeeViaLLM = async () => {
     const bee = await agentExecutor.invoke({
-      prompt: "Add one bee to the map.",
+      prompt: "Add one bee to the map, near the hive.",
     });
-    console.log("bee results", bee);
   };
 
   const changeBrush = (brush: WorldState["controls"]["brush"]) => () => {
