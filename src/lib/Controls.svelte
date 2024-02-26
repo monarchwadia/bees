@@ -8,10 +8,6 @@
 
   export let state: WorldState;
 
-  const changeSpeed = (e: Event) => {
-    state.controls.speed = (e.target as HTMLInputElement).valueAsNumber;
-  };
-
   let agentExecutor: Awaited<ReturnType<typeof agentExecutorBuilder>>;
   onMount(async () => {
     agentExecutor = await agentExecutorBuilder(state);
@@ -24,26 +20,19 @@
     console.log("bee results", bee);
   };
 
-  // flightRandomness: 7,
-  //     objectDetectionRange: 50,
-  //     objectInteractionRange: 10,
-  //     trailPointAttraction: 2,
-  //     rotationSpeedMin: 0.004,
-  //     rotationSpeedMax: 0.008,
-  //     trailPointDropChance: 0.2,
-  //     hungerFeedingThreshold: 80,
-  //     trailpointCreationMinStrength: 250,
-  //     trailpointCreationMaxStrength: 750,
+  const changeBrush = (brush: WorldState["controls"]["brush"]) => () => {
+    state.controls.brush = brush;
+  };
 </script>
 
 <div class="flex flex-col gap-2">
-  <p class="control-section-header">Bees</p>
-  <button
-    class="btn"
-    on:click={() => {
-      state.objects.push(beeBuilder({}, state));
-    }}>Add Bee</button
-  >
+  <p class="control-section-header">Brushes</p>
+  <button class="btn" on:click={changeBrush("bee")}>Bee</button>
+  <button class="btn" on:click={changeBrush("flower")}>Flower</button>
+  <button class="btn" on:click={changeBrush("trail-point")}>TrailPoint</button>
+  <button class="btn" on:click={changeBrush("erase")}>Erase</button>
+
+  <p class="control-section-header">Test</p>
   <button
     class="btn"
     on:click={() => {

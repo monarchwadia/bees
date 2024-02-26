@@ -55,6 +55,7 @@ export type WorldState = {
   controls: {
     isRunning: boolean;
     speed: number;
+    brush: "bee" | "flower" | "trail-point" | "erase";
   };
   hive: {
     pollen: number;

@@ -5,10 +5,16 @@ import {
   GLOBAL_MAP_HEIGHT,
   GLOBAL_MAP_WIDTH,
 } from "./constants";
+import { beeBuilder } from "./beeBuilder";
+import { flowerBuilder } from "./flowerBuilder";
+import { buildClickHandler } from "./clickHandler";
 
 export const sketchProvider = (state: WorldState) => (p: p5) => {
+  let canvas: p5.Renderer;
+
   p.setup = () => {
-    p.createCanvas(GLOBAL_MAP_WIDTH, GLOBAL_MAP_HEIGHT);
+    canvas = p.createCanvas(GLOBAL_MAP_WIDTH, GLOBAL_MAP_HEIGHT);
+    canvas.mouseClicked(buildClickHandler(p, state));
   };
 
   p.draw = () => {
@@ -52,6 +58,7 @@ export const sketchProvider = (state: WorldState) => (p: p5) => {
       `Bees: ${numBees}
 Pollen: ${state.hive.pollen}
 FPS: ${p.frameRate().toFixed(2)}
+Brush: ${state.controls.brush}
 `,
       20,
       20

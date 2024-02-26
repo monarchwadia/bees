@@ -1,8 +1,8 @@
 import type { WorldState } from "@bees/types";
 import { GLOBAL_DEFAULT_SPEED } from "./constants";
 
-export const defaultStateProvider = () => {
-  const config = {
+export const defaultStateProvider = (): WorldState => {
+  const config: WorldState["config"] = {
     bee: {
       flightRandomness: 7,
       objectDetectionRange: 50,
@@ -29,8 +29,9 @@ export const defaultStateProvider = () => {
       pollen: 65,
     },
     controls: {
-      isRunning: true,
       speed: GLOBAL_DEFAULT_SPEED,
+      isRunning: true,
+      brush: "bee",
     },
     objects: [],
   };
