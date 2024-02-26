@@ -14,6 +14,6 @@ I want to install https://webllm.mlc.ai/ and use it to control the game.
 
 # 2024-02-25
 
-Sim params can now be controlled via slider
+Sim params can now be controlled via slider. And, the LLM can now successfully follow instructions for adding ants.
 
 After talking to Yeshe i should probably rename from bees to ants.
