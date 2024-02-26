@@ -9,6 +9,7 @@ export default defineConfig({
       "@src": "/src",
       "@bees": "/src/bees",
       "@lib": "/src/lib",
+      "@ai": "/src/ai",
     },
   },
 });

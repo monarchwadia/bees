@@ -1,32 +1,39 @@
-import { beeBuilder } from "./beeBuilder";
-import type { WorldState } from "./types";
+import { beeBuilder } from "../bees/beeBuilder";
+import type { WorldState } from "../bees/types";
 import { ChatOpenAI } from "@langchain/openai";
 import { DynamicStructuredTool } from "@langchain/core/tools";
 import { createOpenAIToolsAgent, AgentExecutor } from "langchain/agents";
 import { PromptTemplate, ChatPromptTemplate } from "@langchain/core/prompts";
 import z from "zod";
+import { getCenterpoint } from "@src/bees/utils";
 
 const OPENAI_KEY = import.meta.env.VITE_OPENAI_KEY;
 
-export const agentExecutorBuilder = async (state: WorldState) => {
+export const requestAgent = async (message: string, state: WorldState) => {
+  const centerpoint = getCenterpoint(state);
+
   // add all the tools here
   const tools = [
     new DynamicStructuredTool({
-      name: "addOneBee",
-      description: "Creates a single bee at the provided x/y coordinates.",
-      schema: z.object({
-        x: z.number(),
-        y: z.number(),
-      }),
-      func: async () => {
-        state.objects.push(beeBuilder({}, state));
-        return "Bee created";
+      name: "createBee",
+      description:
+        "Creates a single bee at the provided x/y coordinates. The params take the form of { x: number, y: number }, where X will be the x coordinate and Y will be the y coordinate of the new bee.",
+      schema: z
+        .object({
+          x: z.number().nonnegative(),
+          y: z.number().nonnegative(),
+        })
+        .strict(),
+      func: async (params) => {
+        const newBee = beeBuilder({ x: params.x, y: params.y }, state);
+        state.objects.push(newBee);
+        return "A new bee was created at " + JSON.stringify(params);
       },
     }),
   ];
 
   const llm = new ChatOpenAI({
-    modelName: "gpt-3.5-turbo",
+    modelName: "gpt-4",
     temperature: 0,
     openAIApiKey: OPENAI_KEY,
   });
@@ -42,7 +49,10 @@ export const agentExecutorBuilder = async (state: WorldState) => {
   const agent = await createOpenAIToolsAgent({
     llm,
     tools,
-    prompt: ChatPromptTemplate.fromTemplate(`
+    prompt: ChatPromptTemplate.fromMessages([
+      [
+        "system",
+        `
 # High level overview
 
 You are an AI that controls a simulation of bees in a garden. The bees collect pollen from flowers and bring it back to the hive.
@@ -80,7 +90,17 @@ Trail points are dropped by bees that are returning with pollen to the hive, and
 # Simulation Controls
 
 The simulation is controlled by a set of commands that the AI can execute. These commands are provided to the AI as a set of tools that it can use to interact with the simulation. Please see the list of tools available for more information.
-`),
+
+# Current state
+
+Here is the current state of the simulation:
+
+{state}
+
+`,
+      ],
+      ["human", message],
+    ]),
   });
 
   const agentExecutor = new AgentExecutor({
@@ -90,5 +110,7 @@ The simulation is controlled by a set of commands that the AI can execute. These
     maxIterations: 1,
   });
 
-  return agentExecutor;
+  return agentExecutor.invoke({
+    state: JSON.stringify(state, null, 2),
+  });
 };

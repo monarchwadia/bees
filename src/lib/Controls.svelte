@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { agentExecutorBuilder } from "@src/bees/agentExecutorBuilder";
+  import { requestAgent } from "@ai/agentExecutorBuilder";
   import { beeBuilder } from "@src/bees/beeBuilder";
   import { flowerBuilder } from "@src/bees/flowerBuilder";
   import type { WorldState } from "@src/bees/types";
@@ -8,15 +8,11 @@
 
   export let state: WorldState;
 
-  let agentExecutor: Awaited<ReturnType<typeof agentExecutorBuilder>>;
-  onMount(async () => {
-    agentExecutor = await agentExecutorBuilder(state);
-  });
-
   const addBeeViaLLM = async () => {
-    const bee = await agentExecutor.invoke({
-      prompt: "Add one bee to the map, near the hive.",
-    });
+    await requestAgent(
+      "Choose a flower from the state object and add a bee with the same coordinates as that flower, such that the bee will be spawned on top of the flower.",
+      state
+    );
   };
 
   const changeBrush = (brush: WorldState["controls"]["brush"]) => () => {
