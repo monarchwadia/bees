@@ -6,12 +6,16 @@ import { createOpenAIToolsAgent, AgentExecutor } from "langchain/agents";
 import { PromptTemplate, ChatPromptTemplate } from "@langchain/core/prompts";
 import z from "zod";
 import { getCenterpoint } from "@src/bees/utils";
+import { flowerBuilder } from "@src/bees/flowerBuilder";
+import {} from "@langchain/core/memory";
+import { BufferMemory } from "langchain/memory";
 
-const OPENAI_KEY = import.meta.env.VITE_OPENAI_KEY;
+const OPENAI_KEY = import.meta.env.VITE_OPENAI_CREDS;
+
+// singleton for now
+// const memory = new BufferMemory();
 
 export const requestAgent = async (message: string, state: WorldState) => {
-  const centerpoint = getCenterpoint(state);
-
   // add all the tools here
   const tools = [
     new DynamicStructuredTool({
@@ -30,10 +34,134 @@ export const requestAgent = async (message: string, state: WorldState) => {
         return "A new bee was created at " + JSON.stringify(params);
       },
     }),
+    new DynamicStructuredTool({
+      name: "createFlower",
+      description:
+        "Creates a single flower at the provided x/y coordinates. The params take the form of { x: number, y: number }, where X will be the x coordinate and Y will be the y coordinate of the new flower.",
+      schema: z
+        .object({
+          x: z.number().nonnegative(),
+          y: z.number().nonnegative(),
+        })
+        .strict(),
+      func: async (params) => {
+        const newFlower = flowerBuilder({ x: params.x, y: params.y }, state);
+        state.objects.push(newFlower);
+        return "A new flower was created at " + JSON.stringify(params);
+      },
+    }),
+    // change parameters as per the requirement
+    /*
+export type WorldState = {
+  config: {
+    bee: {
+      flightRandomness: number;
+      objectDetectionRange: number;
+      objectInteractionRange: number;
+      trailPointAttraction: number;
+      rotationSpeedMin: number;
+      rotationSpeedMax: number;
+      trailPointDropChance: number;
+      hungerFeedingThreshold: number;
+      trailpointCreationMinStrength: number;
+      trailpointCreationMaxStrength: number;
+    };
+    hive: {
+      pollenStockpileMinimum: number;
+    };
+    flower: {
+      creationChance: number;
+    };
+  };
+  controls: {
+    isRunning: boolean;
+    speed: number;
+    brush: "bee" | "flower" | "trail-point" | "erase";
+  };
+  hive: {
+    pollen: number;
+  };
+  objects: WorldObject[];
+};
+
+    */
+    new DynamicStructuredTool({
+      name: "updateConfigOrControls",
+      description:
+        "Updates the state object. Only affects the 'config' or the 'controls' keys. state.config has bee, hive, flower as keys. state.controls has isRunning, speed, brush as keys. configuration of the simulation. All keys are optional.",
+      schema: z.object({
+        config: z
+          .object({
+            bee: z
+              .object({
+                flightRandomness: z.number().optional(),
+                objectDetectionRange: z.number().optional(),
+                objectInteractionRange: z.number().optional(),
+                trailPointAttraction: z.number().optional(),
+                rotationSpeedMin: z.number().optional(),
+                rotationSpeedMax: z.number().optional(),
+                trailPointDropChance: z.number().optional(),
+                hungerFeedingThreshold: z.number().optional(),
+                trailpointCreationMinStrength: z.number().optional(),
+                trailpointCreationMaxStrength: z.number().optional(),
+              })
+              .optional(),
+            hive: z
+              .object({
+                pollenStockpileMinimum: z.number().optional(),
+              })
+              .optional(),
+            flower: z
+              .object({
+                creationChance: z.number().optional(),
+              })
+              .optional(),
+          })
+          .optional(),
+        controls: z
+          .object({
+            isRunning: z.boolean().optional(),
+            speed: z.number().optional(),
+            brush: z.enum(["bee", "flower", "trail-point", "erase"]).optional(),
+          })
+          .optional(),
+      }),
+      func: async (params) => {
+        // returns { controls: { isRunning: false }} or { config: { bee: { flightRandomness: 0.5 }}}
+        // recursively update the state object
+
+        console.log("params", params);
+
+        if (params.controls) {
+          Object.entries(params.controls).forEach(([k, v]) => {
+            // @ts-expect-error - this is fine
+            if (v !== undefined) state.controls[k] = v;
+          });
+        }
+
+        if (params.config) {
+          Object.entries(params.config).forEach(([k1, v1]) => {
+            Object.entries(v1).forEach(([k2, v2]) => {
+              // @ts-expect-error - this is fine
+              if (v2 !== undefined) state.config[k1][k2] = v2;
+            });
+          });
+        }
+
+        return (
+          "/* Here is the updated config */ " +
+          JSON.stringify(
+            { config: state.config, controls: state.controls },
+            null,
+            2
+          )
+        );
+      },
+    }),
   ];
 
   const llm = new ChatOpenAI({
-    modelName: "gpt-4",
+    modelName: "gpt-4-0125-preview",
     temperature: 0,
     openAIApiKey: OPENAI_KEY,
   });
@@ -106,11 +234,17 @@ Here is the current state of the simulation:
   const agentExecutor = new AgentExecutor({
     agent,
     tools,
+    // memory,
     verbose: true,
     maxIterations: 1,
   });
 
-  return agentExecutor.invoke({
+  const result = await agentExecutor.invoke({
     state: JSON.stringify(state, null, 2),
   });
+
+  return {
+    result,
+    // memory,
+  };
 };

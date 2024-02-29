@@ -6,6 +6,7 @@
   import { onMount } from "svelte";
   import { GameManager } from "./bees/GameManager";
   import { sketchProvider } from "./bees/sketchProvider";
+  import Chat from "./lib/Chat.svelte";
   const state: WorldState = defaultStateProvider();
 
   let elem: HTMLDivElement;

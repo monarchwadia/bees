@@ -5,6 +5,7 @@
   import type { WorldState } from "@src/bees/types";
   import { onMount } from "svelte";
   import SliderControl from "./SliderControl.svelte";
+  import Chat from "./Chat.svelte";
 
   export let state: WorldState;
 
@@ -41,6 +42,7 @@
       addBeeViaLLM();
     }}>Add Bee Via LLM</button
   >
+  <Chat {state} />
 
   <p class="control-section-header">Game</p>
   <button
